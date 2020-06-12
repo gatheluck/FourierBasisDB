@@ -1,0 +1,3 @@
+db_path: ''
+num_image_per_class: 7
+image_ext: '.jpeg'
