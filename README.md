@@ -8,6 +8,7 @@
 
 The script `apps/generate.py`
 generates Fourier Basis DB (FBDB).
+
 Example code:
 ```
 cd apps
@@ -20,6 +21,7 @@ The DB is saved under `logs/generate`.
 
 The script `apps/show_sample.py` 
 randomly selects some images form generated FBDB and tiles them in a single image like teaser image of this repo. 
+
 Example code:
 ```
 cd apps
