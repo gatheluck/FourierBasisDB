@@ -16,7 +16,7 @@ sys.path.append(base)
 from submodules.FourierHeatmap.fhmap import fourier_base
 
 
-def generate(num_basis: int, num_image_per_class: int, norm: str, num_channel: int, image_size: int):
+def generate(num_basis: int, num_image_per_class: int, class_type: str, num_channel: int, image_size: int):
     """
     generate Fourier Basis DB.
     number of class is decided by the norm of index. currently of l1 and l2 norm are supported.
@@ -24,12 +24,12 @@ def generate(num_basis: int, num_image_per_class: int, norm: str, num_channel: i
     Args
     - num_basis: number of Fourier basis used to generate DB. in total, np.floor(num_basis) x 2 types of basis are used.
     - num_image_per_class: number of image to generate per class. Note: currently this variable is not strictly applied.
-    - norm: type of norm to use decide class.
+    - class_type: how to decide same class. currently full, l1 norm, l2 norm are supported.
     - image_size: size of output image.
     """
     assert num_basis > 0
     assert num_image_per_class > 0
-    assert norm in "l1 l2".split()
+    assert class_type in "full l1 l2".split()
     assert num_channel > 0
     assert image_size > 0
     assert image_size >= num_basis
@@ -41,18 +41,21 @@ def generate(num_basis: int, num_image_per_class: int, norm: str, num_channel: i
     indices = [(h_index, w_index) for h_index in range(-num_basis_half, num_basis_half + 1)
                                   for w_index in range(-num_basis_half, num_basis_half + 1)]
 
-    if norm == "l1":
-        p = 1
-    elif norm == "l2":
-        p = 2
+    if class_type == 'full':
+        counts = [1.0 for i in range(len(indices))]
     else:
-        raise NotImplementedError
+        if class_type == "l1":
+            p = 1
+        elif class_type == "l2":
+            p = 2
+        else:
+            raise NotImplementedError
 
-    indices_norm = [int(torch.norm(torch.FloatTensor(index), p).item()) for index in indices]
-    norm_counts = collections.Counter(indices_norm)
+        indices_norm = [int(torch.norm(torch.FloatTensor(index), p).item()) for index in indices]
+        counts = collections.Counter(indices_norm)
 
     # create output dir
-    root_path = '_'.join(['fbdb', norm, 'basis-{0:04d}'.format(num_basis), 'cls-{0:04d}'.format(len(norm_counts))])
+    root_path = '_'.join(['fbdb', class_type, 'basis-{0:04d}'.format(num_basis), 'cls-{0:04d}'.format(len(counts))])
     os.makedirs(root_path)
 
     # loop over Fourier basis index
@@ -61,14 +64,15 @@ def generate(num_basis: int, num_image_per_class: int, norm: str, num_channel: i
             # show progress bar
             pbar.set_postfix(collections.OrderedDict(h_index=h_index, w_index=w_index))
 
-            norm = int(torch.norm(torch.FloatTensor([h_index, w_index]), p).item())
+            if class_type in 'l1 l2'.split():
+                norm = int(torch.norm(torch.FloatTensor([h_index, w_index]), p).item())
 
             # outpath
-            outpath = os.path.join(root_path, '{0:05d}'.format(norm))
+            outpath = os.path.join(root_path, '{0:+04d}_{1:+04d}'.format(h_index, w_index)) if class_type == 'full' else os.path.join(root_path, '{0:05d}'.format(norm))
             os.makedirs(outpath, exist_ok=True)
 
             # number of image which is needed
-            num_needed_image = int(num_image_per_class * 1.0 / norm_counts[norm])
+            num_needed_image = num_image_per_class if class_type == 'full' else int(num_image_per_class * 1.0 / counts[norm])
             if num_needed_image < 1:
                 num_needed_image = 1
 
