@@ -1,6 +1,6 @@
 # Fourier Basis DB
 
-<img src="samples/sample_image.png" height="300px">
+<img src="samples/sample_image_l2.png" height="300px">
 
 ## Usage
 
