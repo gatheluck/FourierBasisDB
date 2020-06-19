@@ -15,8 +15,7 @@ cd apps
 python generate.py class_type=l2 num_image_per_class=100 num_basis=31 image_size=32
 ```
 will generate 32x32 FBDB by using 31x31 2D Fourier basis. 
-The DB is saved under `logs/generate`.
-
+The DB is saved under `logs/generate`. 
 If you want to separate validation from train set.
 Please specify val_ratio larger than 0.0 like follows.
 
