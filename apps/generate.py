@@ -14,9 +14,10 @@ base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../")
 sys.path.append(base)
 
 from submodules.FourierHeatmap.fhmap import fourier_base
+from fbdb.utils import val_prep
 
 
-def generate(num_basis: int, num_image_per_class: int, class_type: str, num_channel: int, image_size: int):
+def generate(num_basis: int, num_image_per_class: int, class_type: str, num_channel: int, image_size: int, val_ratio: float = 0.0):
     """
     generate Fourier Basis DB.
     number of class is decided by the norm of index. currently of l1 and l2 norm are supported.
@@ -26,6 +27,7 @@ def generate(num_basis: int, num_image_per_class: int, class_type: str, num_chan
     - num_image_per_class: number of image to generate per class. Note: currently this variable is not strictly applied.
     - class_type: how to decide same class. currently full, l1 norm, l2 norm are supported.
     - image_size: size of output image.
+    - val_ratio: ratio of validatation set. if not zero, apply val_prep function.
     """
     assert num_basis > 0
     assert num_image_per_class > 0
@@ -33,6 +35,7 @@ def generate(num_basis: int, num_image_per_class: int, class_type: str, num_chan
     assert num_channel > 0
     assert image_size > 0
     assert image_size >= num_basis
+    assert 0 <= val_ratio < 1.0
 
     num_basis = num_basis if num_basis % 2 != 0 else num_basis - 1  # num_basis should be odd
     num_basis_half = int(np.floor(num_basis / 2))
@@ -93,6 +96,10 @@ def generate(num_basis: int, num_image_per_class: int, class_type: str, num_chan
 
                 fp = os.path.join(outpath, '{h_index:+04d}_{w_index:+04d}_{i_image:05d}.jpeg'.format(h_index=h_index, w_index=w_index, i_image=i_image))
                 torchvision.utils.save_image(base, fp)
+
+    # apply val prep
+    if val_ratio > 0.0:
+        val_prep(dataset_path=root_path, val_ratio=val_ratio, keep_orig=False)
 
 
 @hydra.main(config_path="../conf/generate.yaml")
