@@ -1,4 +1,5 @@
-class_type: l2
+metric: freq
+norm_type: l2
 num_image_per_class: 100
 num_basis: 31
 num_channel: 3
