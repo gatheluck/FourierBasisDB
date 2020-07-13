@@ -12,10 +12,10 @@ generates Fourier Basis DB (FBDB).
 Example code:
 ```
 cd apps
-python generate.py class_type=l2 num_image_per_class=100 num_basis=31 image_size=32
+python generate.py metric=freq norm_type=l2 num_image_per_class=100 num_basis=31 image_size=32
 ```
 will generate 32x32 FBDB by using 31x31 2D Fourier basis. 
-The DB is saved under `logs/generate`. Currently, `l2, l1, full`  are supported as `class_type` option.
+The DB is saved under `logs/generate`. Currently, `freq index balance`  are supported for `metric` option and `l2`  or `l1`  is for `norm_type`  option. 
 
 If you want to separate validation from train set.
 Please specify `val_ratio` larger than 0.0 like follows.
@@ -23,7 +23,7 @@ Please specify `val_ratio` larger than 0.0 like follows.
 Example code:
 ```
 cd apps
-python generate.py class_type=l2 num_image_per_class=100 num_basis=31 image_size=32 val_ratio=0.1
+python generate.py metric=freq norm_type=l2 num_image_per_class=100 num_basis=31 image_size=32 val_ratio=0.1
 ```
 
 ### Showing Sample Images
