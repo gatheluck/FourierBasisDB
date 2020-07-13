@@ -4,3 +4,4 @@ num_basis: 31
 num_channel: 3
 image_size: 32
 val_ratio: 0.0
+log_dir: .
