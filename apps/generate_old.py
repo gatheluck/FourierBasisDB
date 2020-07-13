@@ -82,7 +82,7 @@ def generate(
             "cls-{0:04d}".format(len(counts)),
         ]
     )
-    root_path = os.path.join(log_dir, dataset_name) 
+    root_path = os.path.join(log_dir, dataset_name)
     os.makedirs(root_path)
 
     # loop over Fourier basis index
