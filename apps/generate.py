@@ -87,7 +87,8 @@ def generate(
             "fbdb",
             "metric-{metric}".format(metric=metric),
             "norm-{norm}".format(norm=norm_type),
-            "basis-{0:04d}".format(num_basis),
+            "basis-{basis:04d}".format(basis=num_basis),
+            "size-{size:04d}".format(size=image_size),
             "cls-{0:04d}".format(num_classes),
         ]
     )
