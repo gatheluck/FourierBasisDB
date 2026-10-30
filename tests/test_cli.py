@@ -18,8 +18,9 @@ def cli(script, *args):
     )
 
 
+@pytest.mark.parametrize('preview_count', [1, 7])
 @pytest.mark.parametrize('metric', ['freq', 'index', 'balance'])
-def test_generate_and_preview(tmp_path, metric):
+def test_generate_and_preview(tmp_path, metric, preview_count):
     run = tmp_path / 'generate'
     result = cli('generate.py', f'metric={metric}', 'num_basis=3', 'image_size=8',
                  'num_image_per_class=2', f'hydra.run.dir={run}')
@@ -33,12 +34,12 @@ def test_generate_and_preview(tmp_path, metric):
             assert image.size == (8, 8)
             assert image.mode == 'RGB'
     preview = tmp_path / 'preview'
-    result = cli('show_sample.py', f'db_path={datasets[0]}', 'num_image_per_class=1',
+    result = cli('show_sample.py', f'db_path={datasets[0]}', f'num_image_per_class={preview_count}',
                  f'hydra.run.dir={preview}')
     assert result.returncode == 0, result.stderr
     with Image.open(preview / 'sample_image.png') as image:
         assert image.width == 8 * len(list(datasets[0].iterdir()))
-        assert image.height == 8
+        assert image.height == 8 * preview_count
 
 
 def test_reject_invalid_basis_without_dataset(tmp_path):

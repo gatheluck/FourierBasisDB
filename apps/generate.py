@@ -154,7 +154,7 @@ def generate(
         val_prep(dataset_path=root_path, val_ratio=val_ratio, keep_orig=False)
 
 
-@hydra.main(config_path="../conf/generate.yaml")
+@hydra.main(version_base="1.3", config_path="../conf", config_name="generate")
 def main(cfg: omegaconf.DictConfig) -> None:
     print(cfg)
     generate(**cfg)

@@ -12,7 +12,7 @@ base = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
 sys.path.append(base)
 
 
-@hydra.main(config_path='../conf/show_sample.yaml')
+@hydra.main(version_base="1.3", config_path="../conf", config_name="show_sample")
 def main(cfg: omegaconf.DictConfig) -> None:
     if cfg.db_path == '':
         raise ValueError('please specify db_path option')
