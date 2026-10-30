@@ -20,3 +20,12 @@ jobs:
       - run: uv pip check
       - run: uv export --locked --no-dev --no-hashes --no-emit-project -o /tmp/requirements.txt
       - run: uv run --no-sync pip-audit -r /tmp/requirements.txt --disable-pip --no-deps
+      # CPU wheels use a local version suffix that PyPI audit cannot look up.
+      # Audit their upstream versions separately rather than silently omitting them.
+      - run: |
+          uv run --no-sync python - <<'PYCODE' > /tmp/pytorch-upstream.txt
+          from importlib.metadata import version
+          for name in ("torch", "torchvision"):
+              print(name + "==" + version(name).split("+")[0])
+          PYCODE
+      - run: uv run --no-sync pip-audit -r /tmp/pytorch-upstream.txt --disable-pip --no-deps
