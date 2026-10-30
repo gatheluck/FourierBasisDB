@@ -29,7 +29,7 @@ def main(cfg: omegaconf.DictConfig) -> None:
         if len(imgpaths) > cfg.num_image_per_class:
             selected_imgpaths = random.sample(imgpaths, cfg.num_image_per_class)
         else:
-            selected_imgpaths = selected_imgpaths + [selected_imgpaths[-1] for i in range(cfg.num_image_per_class - len(imgpaths))]
+            selected_imgpaths = imgpaths + [imgpaths[-1]] * (cfg.num_image_per_class - len(imgpaths))
 
         class_sample_images = []
         for imgpath in selected_imgpaths:

@@ -54,3 +54,17 @@ def test_reject_missing_database(tmp_path):
     assert result.returncode != 0
     assert 'please specify db_path' in result.stderr
     assert not (tmp_path / 'sample_image.png').exists()
+
+
+def test_validation_split_preserves_all_generated_images(tmp_path):
+    result = cli('generate.py', 'metric=index', 'num_basis=3', 'image_size=8',
+                 'num_image_per_class=3', 'val_ratio=0.25', f'hydra.run.dir={tmp_path}')
+    assert result.returncode == 0, result.stderr
+    dataset, = tmp_path.glob('fbdb_*')
+    train = list((dataset / 'train').glob('*/*.jpeg'))
+    val = list((dataset / 'val').glob('*/*.jpeg'))
+    # Six basis classes, each historically generates requested count + one.
+    assert len(train) == 18
+    assert len(val) == 6
+    assert set(p.name for p in train).isdisjoint(p.name for p in val)
+    assert {p.name for p in dataset.iterdir()} == {'train', 'val'}
